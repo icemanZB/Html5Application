@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>canvas-旋转小方块</title>
+    <style>
+        body {
+            background: black;
+        }
+
+        #c1 {
+            background: white;
+        }
+
+        span {
+            color: white;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oC = document.getElementById('c1');
+            var oGC = oC.getContext('2d');
+            var num = 0;
+            var num2 = 0; // 控制缩放
+            var value = 1;
+
+            setInterval(function () {
+                num++;
+
+                oGC.save(); // 在封闭的环境下进行操作,避免rotate角度的增加
+
+                oGC.clearRect(0, 0, oC.width, oC.height);
+
+                oGC.translate(100, 100);
+
+                if (num2 == 100) {
+                    value = -1;
+                }
+                else if (num2 == 0) {
+                    value = 1;
+                }
+                num2 += value;
+
+                oGC.scale(num2 * 1 / 50, num2 * 1 / 50);
+
+                oGC.rotate(num * Math.PI / 180);
+
+                oGC.translate(-50, -50); // 移动到方块的中心
+
+                oGC.fillRect(0, 0, 100, 100);
+
+                oGC.restore();
+
+            }, 30);
+        };
+    </script>
+</head>
+<body>
+<canvas id="c1" width="400" height="400">
+    <span>不支持canvas浏览器</span>
+</canvas>
+</body>
+</html>
