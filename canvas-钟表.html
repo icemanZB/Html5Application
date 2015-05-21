@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>canvas-钟表</title>
+    <style>
+        body {
+            background: black;
+        }
+
+        #c1 {
+            background: white;
+        }
+
+        span {
+            color: white;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oC = document.getElementById('c1');
+            var oGC = oC.getContext('2d');
+
+            function toDraw() {
+                // 制定坐标(中心点)
+                var x = 200;
+                var y = 200;
+                var r = 150;
+
+                oGC.clearRect(0, 0, oC.width, oC.height);
+
+                var oDate = new Date();
+                var oHours = oDate.getHours();
+                var oMin = oDate.getMinutes();
+                var oSen = oDate.getSeconds();
+                // -90 因为真正的时钟的顶点在12点位置,而canvas的园坐标是在x轴
+                // 那么要同步坐标轴 所以要先-90
+                // 假设在18点的位置,那么就是旋转了180°
+                // 分针走了30分钟, 时钟要多走15° 假设oMin是30分 除以2即可
+                var oHoursValue = (-90 + oHours * 30 + oMin / 2) * Math.PI / 180;
+                // 每一分走6° 所以乘以6
+                var oMinValue = (-90 + oMin * 6) * Math.PI / 180;
+                var oSenValue = (-90 + oSen * 6) * Math.PI / 180;
+
+
+                /*oGC.moveTo(x,y);
+
+                 oGC.arc(x,y,r,0,6*Math.PI/180,false);
+
+                 oGC.moveTo(x,y);
+
+                 oGC.arc(x,y,r,6*Math.PI/180,12*Math.PI/180,false);*/
+
+                oGC.beginPath();
+
+                for (var i = 0; i < 60; i++) {
+                    oGC.moveTo(x, y); // 移动到中心点
+                    oGC.arc(x, y, r, 6 * i * Math.PI / 180, 6 * (i + 1) * Math.PI / 180, false);
+                }
+
+                oGC.closePath();
+
+                oGC.stroke(); // 画线
+
+                // 画白色的圆盘
+                oGC.fillStyle = 'white';
+
+                oGC.beginPath();
+
+                oGC.moveTo(x, y);
+                // r * 19 / 20 估算的值
+                oGC.arc(x, y, r * 19 / 20, 0, 360 * Math.PI / 180, false);
+
+                oGC.closePath();
+
+                oGC.fill(); // 填充
+
+                // 画大分割
+                oGC.lineWidth = 3;
+
+                oGC.beginPath();
+
+                for (var i = 0; i < 12; i++) {
+                    oGC.moveTo(x, y);
+                    oGC.arc(x, y, r, 30 * i * Math.PI / 180, 30 * (i + 1) * Math.PI / 180, false);
+                }
+
+                oGC.closePath();
+
+                oGC.stroke();
+
+                // 在盖个白色的表盘
+                oGC.fillStyle = 'white';
+
+                oGC.beginPath();
+
+                oGC.moveTo(x, y);
+                // 估算的值r * 18 / 20
+                oGC.arc(x, y, r * 18 / 20, 0, 360 * Math.PI / 180, false);
+
+                oGC.closePath();
+
+                oGC.fill();
+
+                // 园画线的方法: 指定起始弧度和结束弧度是同一个值,相当于没有做任何的旋转
+                // 就是一条直线
+                oGC.lineWidth = 5;
+
+                oGC.beginPath();
+                oGC.moveTo(x, y);
+                // 时针
+                oGC.arc(x, y, r * 1 / 2, oHoursValue, oHoursValue, false);
+
+                oGC.closePath();
+                oGC.stroke();
+
+                // 分针
+                oGC.lineWidth = 3;
+                oGC.beginPath();
+                oGC.moveTo(x, y);
+
+                oGC.arc(x, y, r * 14 / 20, oMinValue, oMinValue, false);
+
+                oGC.closePath();
+                oGC.stroke();
+
+                // 秒针
+                oGC.lineWidth = 1;
+                oGC.beginPath();
+                oGC.moveTo(x, y);
+
+                oGC.arc(x, y, r * 19 / 20, oSenValue, oSenValue, false);
+
+                oGC.closePath();
+                oGC.stroke();
+
+
+            }
+
+            setInterval(toDraw, 1000);
+
+            toDraw();
+
+        };
+    </script>
+</head>
+<body>
+<canvas id="c1" width="400" height="400">
+    <span>不支持canvas浏览器</span>
+</canvas>
+</body>
+</html>
