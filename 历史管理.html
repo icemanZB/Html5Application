@@ -9,7 +9,7 @@
             var oBtn=document.getElementById('btn');
             oBtn.onclick=function(){
                 var arr=randomNum(35,7);
-
+                
                 history.pushState(arr,'',arr); // 存历史管理
 
                 oDiv.innerHTML=arr;
@@ -21,7 +21,7 @@
             };
 
             function randomNum(iTotal,iNow){
-                var arr=[]
+                var arr=[];
                 var newArr=[];
                 for(var i=1;i<=iTotal;i++){
                     arr.push(i);
