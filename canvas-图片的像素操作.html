@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>canvas-图片的像素操作</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-size: 30px;
+        }
+
+        #c1 {
+            background: white;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oC = document.getElementById('c1');
+            var oGC = oC.getContext('2d');
+
+            var yImg = new Image();
+
+            yImg.onload = function () {
+                draw(this);
+            };
+            // 这张图片必须是同源下的
+            yImg.src = 'img/miaov.png';
+
+            function draw(obj) {
+                // 设置画布的宽度
+                oC.width = obj.width;
+                // 画图片
+                oGC.drawImage(obj, 0, 0);
+
+                var oImg = oGC.getImageData(0, 0, obj.width, obj.height);
+
+                var w = oImg.width; // 一行的个数
+                var h = oImg.height; // 一列的个数
+
+                var newImg = oGC.createImageData(obj.width,obj.height);
+
+                // 循环 行 列
+                for (var i = 0; i < h; i++) {
+
+                    for (var j = 0; j < w; j++) {
+
+                        var result = [];
+
+                        var color = getXY(oImg, j, i);
+
+                        // 反色 : 获取到每一个颜色的值用255减去获取到的值 这个值就是反射
+                        result[0] = 255 - color[0];
+                        result[1] = 255 - color[1];
+                        result[2] = 255 - color[2];
+                        // 透明度
+                        result[3] = 255*i/h;
+                        // result[3] = 255;
+
+                        // setXY(oImg, j, i, result);
+
+                        // 倒影
+                        setXY(newImg,j,h-i,result);
+
+                    }
+
+                }
+
+                // oGC.putImageData(oImg, 0, obj.height);
+
+                oGC.putImageData(newImg, 0, obj.height);
+
+            }
+
+            function getXY(obj, x, y) { //针对一行一列进行操作
+
+                var w = obj.width;
+                var h = obj.height;
+                var d = obj.data;
+
+                var color = [];
+
+                color[0] = d[4 * (y * w + x)];
+                color[1] = d[4 * (y * w + x) + 1];
+                color[2] = d[4 * (y * w + x) + 2];
+                color[3] = d[4 * (y * w + x) + 3];
+
+                return color;
+
+            }
+
+            function setXY(obj, x, y, color) {
+                var w = obj.width;
+                var h = obj.height;
+                var d = obj.data;
+
+
+                d[4 * (y * w + x)] = color[0];
+                d[4 * (y * w + x) + 1] = color[1];
+                d[4 * (y * w + x) + 2] = color[2];
+                d[4 * (y * w + x) + 3] = color[3];
+
+            }
+
+        };
+    </script>
+</head>
+<body>
+<canvas id="c1" width="400" height="400"></canvas>
+</body>
+</html>
