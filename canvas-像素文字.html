@@ -26,6 +26,9 @@
                     var str = this.innerHTML; // 获取文字
 
                     var h = 180;
+                    var timer = null;
+                    clearInterval(timer);
+                    var iNow = 0;
 
                     // 每次点击清空之前的画布
                     oGC.clearRect(0, 0, oC.width, oC.height);
@@ -53,15 +56,26 @@
                     // 创建新的像素区域
                     var newImg = oGC.createImageData(w, h);
 
-                    for (var i = 0; i < arr.length; i++) {
-                        newImg.data[4 * arr[i]] = oImg.data[4 * arr[i]];
-                        newImg.data[4 * arr[i] + 1] = oImg.data[4 * arr[i] + 1];
-                        newImg.data[4 * arr[i] + 2] = oImg.data[4 * arr[i] + 2];
-                        newImg.data[4 * arr[i] + 3] = oImg.data[4 * arr[i] + 3];
-                    }
+                    timer = setInterval(function () {
+                        for (var i = 0; i < arr[iNow].length; i++) {
+                            newImg.data[4 * arr[iNow][i]] = oImg.data[4 * arr[iNow][i]];
+                            newImg.data[4 * arr[iNow][i] + 1] = oImg.data[4 * arr[iNow][i] + 1];
+                            newImg.data[4 * arr[iNow][i] + 2] = oImg.data[4 * arr[iNow][i] + 2];
+                            newImg.data[4 * arr[iNow][i] + 3] = oImg.data[4 * arr[iNow][i] + 3];
+                        }
 
-                    // 生成新的文字
-                    oGC.putImageData(newImg, (oC.width - w) / 2, (oC.height - h) / 2);
+                        // 生成新的文字
+                        oGC.putImageData(newImg, (oC.width - w) / 2, (oC.height - h) / 2);
+                        if (iNow == 9) {
+                            iNow = 0;
+                            clearInterval(timer);
+                        }
+                        else {
+                            iNow++;
+                        }
+
+                    }, 200);
+
 
                 };
             }
@@ -69,15 +83,25 @@
             // 从一组数中取出一部分
             function randomArr(iAll, iNow) {
                 var arr = [];
-                var newArr = [];
+                var allArr = [];
                 for (var i = 0; i < iAll; i++) {
                     arr.push(i);
                 }
 
-                for (var i = 0; i < iNow; i++) {
-                    newArr.push(arr.splice(Math.floor(Math.random() * arr.length), 1));
+                for (var j = 0; j < iAll / iNow; j++) {
+
+                    var newArr = [];
+
+                    for (var i = 0; i < iNow; i++) {
+                        newArr.push(arr.splice(Math.floor(Math.random() * arr.length), 1));
+                    }
+
+                    allArr.push(newArr);
+
                 }
-                return newArr;
+
+                // 返回的数组是一个复合数组,包括十个小数组,每个小数组都存着10%像素的值
+                return allArr;
             }
 
 
