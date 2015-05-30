@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>canvas-像素文字</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-size: 30px;
+        }
+
+        #c1 {
+            background: white;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oC = document.getElementById('c1');
+            var oGC = oC.getContext('2d');
+
+            var aLi = document.getElementsByTagName('li');
+
+            for (var i = 0; i < aLi.length; i++) {
+                aLi[i].onclick = function () {
+                    var str = this.innerHTML; // 获取文字
+
+                    var h = 180;
+
+                    // 每次点击清空之前的画布
+                    oGC.clearRect(0, 0, oC.width, oC.height);
+
+                    // 文字居中显示
+                    oGC.font = h + 'px impact';
+
+                    oGC.textBaseline = 'top';
+
+                    oGC.fillStyle = 'red'; // 设置文字颜色
+
+                    var w = oGC.measureText(str).width; // 获取文字的宽度
+
+                    oGC.fillText(str, (oC.width - w) / 2, (oC.height - h) / 2);
+
+                    // 获取区域的所有像素
+                    var oImg = oGC.getImageData((oC.width - w) / 2, (oC.height - h) / 2, w, h);
+
+                    // 为了显示新的像素文字,清空当前画布的文字
+                    oGC.clearRect(0, 0, oC.width, oC.height);
+
+                    // 获取一组数中的10%  w * h指的是所有像素 从中取 w * h / 10 就是10%
+                    var arr = randomArr(w * h, w * h / 10);
+
+                    // 创建新的像素区域
+                    var newImg = oGC.createImageData(w, h);
+
+                    for (var i = 0; i < arr.length; i++) {
+                        newImg.data[4 * arr[i]] = oImg.data[4 * arr[i]];
+                        newImg.data[4 * arr[i] + 1] = oImg.data[4 * arr[i] + 1];
+                        newImg.data[4 * arr[i] + 2] = oImg.data[4 * arr[i] + 2];
+                        newImg.data[4 * arr[i] + 3] = oImg.data[4 * arr[i] + 3];
+                    }
+
+                    // 生成新的文字
+                    oGC.putImageData(newImg, (oC.width - w) / 2, (oC.height - h) / 2);
+
+                };
+            }
+
+            // 从一组数中取出一部分
+            function randomArr(iAll, iNow) {
+                var arr = [];
+                var newArr = [];
+                for (var i = 0; i < iAll; i++) {
+                    arr.push(i);
+                }
+
+                for (var i = 0; i < iNow; i++) {
+                    newArr.push(arr.splice(Math.floor(Math.random() * arr.length), 1));
+                }
+                return newArr;
+            }
+
+
+        };
+    </script>
+</head>
+<body>
+<canvas id="c1" width="400" height="400"></canvas>
+<ul style="float:left;">
+    <li>妙</li>
+    <li>味</li>
+    <li>课</li>
+    <li>堂</li>
+</ul>
+</body>
+</html>
