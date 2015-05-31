@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>简易祖玛</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: black;
+        }
+
+        #div1 {
+            background: white;
+            width: 600px;
+            margin: 20px auto;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var oC = document.getElementById('c1');
+            var oGC = oC.getContext('2d');
+
+            var yImg = new Image();
+
+            yImg.src = 'person.png';
+
+            yImg.onload = function () {
+
+                setInterval(function () {
+
+                    oGC.clearRect(0, 0, oC.width, oC.height);
+
+                    // 绘制路径
+                    oGC.beginPath();
+                    oGC.arc(300, 200, 200, -90 * Math.PI / 180, 180 * Math.PI / 180, false);
+                    oGC.stroke();
+
+                    oGC.beginPath();
+                    oGC.arc(250, 200, 150, 180 * Math.PI / 180, 360 * Math.PI / 180, false);
+                    oGC.stroke();
+                    oGC.beginPath();
+                    oGC.arc(400, 200, 20, 0, 360 * Math.PI / 180, false);
+                    oGC.stroke();
+                    // 绘制路径end
+
+                    // 循环小球
+                    for (var i = 0; i < ball.length; i++) {
+
+                        oGC.beginPath();
+                        // 移动到中心点
+                        oGC.moveTo(ball[i].x, ball[i].y);
+                        oGC.arc(ball[i].x, ball[i].y, 20, 0, 360 * Math.PI / 180, false);
+                        oGC.fill();
+                    }
+
+                    // 把他变成独立的空间
+                    oGC.save();
+                    // 把图片平移到中间
+                    // translate 平移的特点是会累加上一次平移的结果
+                    oGC.translate(300, 200);
+                    // 旋转
+                    oGC.rotate(iRotate);
+                    // 围绕着中心点转
+                    oGC.translate(-40, -40);
+                    // 把图片添加到页面中
+                    oGC.drawImage(yImg, 0, 0);
+                    oGC.restore();
+
+                }, 1000 / 60);  // 60帧
+
+                // 半径为200的大圆进行圆周运动
+                setInterval(function () {
+
+                    for (var i = 0; i < ball.length; i++) {
+
+                        ball[i].num++;
+
+                        // 从0 走到270 正好到了小圆的位置上
+                        if (ball[i].num == 270) {
+                            ball[i].r = 150;  // 修改半径为小圆的半径
+                            // 修改小圆的起始点
+                            ball[i].startX = 250;
+                            ball[i].startY = 50;  // 200-150
+                        }
+
+                        if (ball[i].num == 270 + 180) {
+                            alert('游戏结束');
+                            window.location.reload();
+                        }
+
+                        // Math.sin() 也是弧度
+                        // sin=x/r  x=sin * r 在加上之前的x坐标
+                        ball[i].x = Math.sin(ball[i].num * Math.PI / 180) * ball[i].r + ball[i].startX;
+                        // 之前的半径-求出来的 + 在加上之前的y坐标
+                        ball[i].y = ball[i].r - Math.cos(ball[i].num * Math.PI / 180) * ball[i].r + ball[i].startY;
+
+                    }
+
+                }, 30);
+
+                var ball = [];
+                // 隔段时间就创建一个球
+                setInterval(function () {
+                    ball.push({
+                        x: 300,
+                        y: 0,
+                        r: 200,
+                        num: 0, // 角度
+                        startX: 300,
+                        startY: 0
+                    });
+                }, 350);
+
+                var iRotate = 0;  // 鼠标的位置
+
+                oC.onmousemove = function (ev) {
+                    var ev = ev || window.event;
+
+                    // 鼠标基于canvas的x y
+                    var x = ev.clientX - oC.offsetLeft;
+                    var y = ev.clientY - oC.offsetTop;
+
+                    var a = x - 300;
+                    var b = y - 200;
+                    // 勾股定理
+                    var c = Math.sqrt(a * a + b * b);
+
+                    if (a > 0 && b > 0) {
+                        iRotate = Math.asin(b / c) + 90 * Math.PI / 180;
+                    }
+                    else if (a > 0) {
+                        iRotate = Math.asin(a / c);
+                    }
+
+                    if (a < 0 && b > 0) {
+                        iRotate = -(Math.asin(b / c) + 90 * Math.PI / 180);
+                    }
+                    else if (a < 0) {
+                        iRotate = Math.asin(a / c);
+                    }
+
+                };
+
+            };
+
+        };
+    </script>
+</head>
+<body>
+<div id="div1">
+    <canvas id="c1" width="600" height="600"></canvas>
+</div>
+</body>
+</html>
