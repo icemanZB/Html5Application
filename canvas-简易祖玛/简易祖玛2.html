@@ -24,12 +24,11 @@
             var oC = document.getElementById('c1');
             var oGC = oC.getContext('2d');
 
-            var i = 0;
-
             setInterval(function () {
 
                 oGC.clearRect(0, 0, oC.width, oC.height);
 
+                // 绘制路径
                 oGC.beginPath();
                 oGC.arc(300, 200, 200, -90 * Math.PI / 180, 180 * Math.PI / 180, false);
                 oGC.stroke();
@@ -38,26 +37,33 @@
                 oGC.arc(250, 200, 150, 180 * Math.PI / 180, 360 * Math.PI / 180, false);
                 oGC.stroke();
                 oGC.beginPath();
-                oGC.arc(400, 200, 20, 0 * Math.PI / 180, 360 * Math.PI / 180, false);
+                oGC.arc(400, 200, 20, 0, 360 * Math.PI / 180, false);
                 oGC.stroke();
+                // 绘制路径end
 
+                // 循环小球
                 for (var i = 0; i < ball.length; i++) {
 
                     oGC.beginPath();
+                    // 移动到中心点
                     oGC.moveTo(ball[i].x, ball[i].y);
-                    oGC.arc(ball[i].x, ball[i].y, 20, 0 * Math.PI / 180, 360 * Math.PI / 180, false);
+                    oGC.arc(ball[i].x, ball[i].y, 20, 0, 360 * Math.PI / 180, false);
                     oGC.fill();
                 }
 
-            }, 1000 / 60);
+            }, 1000 / 60);  // 60帧
 
+            // 半径为200的大圆进行圆周运动
             setInterval(function () {
 
                 for (var i = 0; i < ball.length; i++) {
 
                     ball[i].num++;
 
+                    // Math.sin() 也是弧度
+                    // sin=x/r  x=sin * r 在加上之前的x坐标
                     ball[i].x = Math.sin(ball[i].num * Math.PI / 180) * ball[i].r + ball[i].startX;
+                    // 之前的半径-求出来的 + 在加上之前的y坐标
                     ball[i].y = ball[i].r - Math.cos(ball[i].num * Math.PI / 180) * ball[i].r + ball[i].startY;
 
                 }
@@ -69,7 +75,7 @@
                 x: 300,
                 y: 0,
                 r: 200,
-                num: 0,
+                num: 0, // 角度
                 startX: 300,
                 startY: 0
             };
