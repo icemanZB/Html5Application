@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>本地存储-同步购物车</title>
+    <script type="text/javascript">
+
+        window.onload = function () {
+            var aInput = document.getElementsByTagName('input');
+
+            for (var i = 0; i < aInput.length; i++) {
+
+                aInput[i].onclick = function () {
+                    // 区分选中和取消的状态
+                    if (this.checked) {
+                        window.localStorage.setItem('sel', this.value);
+                    }
+                    else {
+                        window.localStorage.setItem('onSel', this.value);
+                    }
+
+                };
+
+            }
+
+            // 当前页面的事件不会触发
+            window.addEventListener('storage', function (ev) {
+
+                if (ev.key == 'sel') {
+
+                    for (var i = 0; i < aInput.length; i++) {
+                        if (ev.newValue == aInput[i].value) {
+                            aInput[i].checked = true;
+                        }
+                    }
+
+                }
+                else if (ev.key == 'onSel') {
+
+                    for (var i = 0; i < aInput.length; i++) {
+                        if (ev.newValue == aInput[i].value) {
+                            aInput[i].checked = false;
+                        }
+                    }
+
+                }
+
+            }, false);
+
+        };
+
+    </script>
+    s
+</head>
+<body>
+<input type="checkbox" value="香蕉"/>香蕉<br/>
+<input type="checkbox" value="苹果"/>苹果<br/>
+<input type="checkbox" value="西瓜"/>西瓜<br/>
+<input type="checkbox" value="哈密瓜"/>哈密瓜<br/>
+</body>
+</html>
